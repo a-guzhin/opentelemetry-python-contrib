@@ -114,7 +114,10 @@ class EngineTracer:
             # use cases and uses the SQL statement in span name correctly as per the spec.
             # For some very special cases it might not record the correct statement if the SQL
             # dialect is too weird but in any case it shouldn't break anything.
-            parts.append(statement.split()[0])
+            if statement:
+                parts.append(statement.split()[0])
+            else:
+                parts.append('Empty SQL statement')
         if db_name:
             parts.append(db_name)
         if not parts:

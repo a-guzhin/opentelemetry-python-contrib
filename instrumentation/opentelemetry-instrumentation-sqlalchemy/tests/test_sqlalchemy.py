@@ -70,6 +70,21 @@ class TestSqlalchemyInstrumentation(TestBase):
         # 2 queries + 2 engine connect
         self.assertEqual(len(spans), 4)
 
+    def test_instrument_empty_sql_statement(self):
+        engine = create_engine("sqlite:///:memory:")
+
+        SQLAlchemyInstrumentor().instrument(
+            engine=engine,
+            tracer_provider=self.tracer_provider,
+        )
+
+        cnx = engine.connect()
+        cnx.execute("")
+
+        spans = self.memory_exporter.get_finished_spans()
+        # 1 queries + 1 engine connect
+        self.assertEqual(len(spans), 2)
+
     def test_instrument_engine_connect(self):
         engine = create_engine("sqlite:///:memory:")
 
